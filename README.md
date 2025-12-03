@@ -1,5 +1,6 @@
 # CF Worker/Pages 五协议节点
 * **VLESS\TROJAN\XHTTP\Shadowsocks\Socks5五协议**
+* 部署成功后访问https://你的域名/你设置的UUID或KEY。建议不设置环境变量直接访问https://你的域名，会提示你设置KEY或UUID
 ## 1. 部署与功能说明
 
 ### 核心设置
