@@ -1,5 +1,5 @@
 # CF Worker 五协议节点
-* **VLESS\TROJAN\XHTTP\Shadowsocks\Socks5**
+* **VLESS\TROJAN\XHTTP\Shadowsocks\Socks5五协议**
 ## 1. 部署与功能说明
 
 ### 核心设置
