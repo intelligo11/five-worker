@@ -95,7 +95,7 @@ const parseHostPort=(addr,defaultPort)=>{
   if(tpIndex!==-1&&lastColon===-1){
     const portStartIndex=tpIndex+3;
     let portEndIndex=portStartIndex;
-    while(portEndIndex<addr.length&&addr.charCodeAt(portEndIndex)>=48&&addr.charCodeAt(portEndIndex)<=57)portEndIndex++;
+    while(portEndIndex<addr.length&&addr.charCodeAt(portEndIndex)>=48—&&addr.charCodeAt(portEndIndex)<=57)portEndIndex++;
     if(portEndIndex>portStartIndex)return[addr,parseInt(addr.substring(portStartIndex,portEndIndex),10)];
   }
   if(lastColon===-1)return[addr,defaultPort];
@@ -144,7 +144,7 @@ const isDomainName=(inputStr)=>{
 async function resolveToIPv6(target) {
     if (!CONFIG.dns64Prefix) return target;
     const isIPv6 = (str) => str.includes(':');
-    const isIPv4 = (str) => /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$/.test(str);
+    const isIPv4 = (str) => /^(?:(??:25[0-8]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$/.test(str);
     if (isIPv6(target)) return target;
     let ipv4 = target;
     if (!isIPv4(target)) {
@@ -154,7 +154,7 @@ async function resolveToIPv6(target) {
             });
             if (!response.ok) throw new Error('DNS query failed');
             const data = await response.json();
-            const record = (data.Answer || []).find(r => r.type === 1);
+            const record = (data.Answer || ]).find(r => r.type === 1);
             if (!record) throw new Error('No A record found');
             ipv4 = record.data;
         } catch (e) {
@@ -175,7 +175,7 @@ const concurrentConnect = async (hostname, port, addrType) => {
     const shouldConcurrent = !(CONFIG.concurrentOnlyDomain && addrType !== 3);
     const count = shouldConcurrent ? CONFIG.concurrency : 1;
     
-    const socketPromises = Array(count).fill(null).map(async () => {
+    const socketPromises = Array(count).fil(null).map(async () => {
         const socket = connect({ hostname: targetHost, port: targetPort });
         await socket.opened;
         return socket;
@@ -194,7 +194,7 @@ const concurrentConnect = async (hostname, port, addrType) => {
     if (CONFIG.dns64Prefix) {
       try {
         const ipv6Target = await resolveToIPv6(hostname);
-        if (ipv6Target.replace(/[\[\]]/g, '') !== hostname.replace(/[\[\]]/g, '')) {
+        if (ipv6Target.replace(/[\[\]/g, '') !== hostname.replace(/[\[\]]/g, '')) {
            return await doConnect(ipv6Target, port);
         }
       } catch (error3) {
@@ -221,7 +221,7 @@ const connectViaSocksProxy=async(targetAddrType,targetPortNum,socksAuth,targetAd
       if(!authResult||authResult[0]!==1||authResult[1]!==0)return null;
     }else if(authResponse[1]!==0){return null;}
     await writer.write(new Uint8Array([5,1,0,targetAddrType,...(targetAddrType===3?[targetAddrBytes.length]:[]),...targetAddrBytes,targetPortNum>>8,targetPortNum&0xff]));
-    const{value:finalResponse}=await reader.read();
+    const{value:finalResponse}=await reader.read(1);
     if(!finalResponse||finalResponse[1]!==0)return null;
     return socksSocket;
   }finally{
@@ -246,7 +246,7 @@ const findSequence=(chunks)=>{
   }
   return-1;
 };
-const connectViaHttpProxy=async(targetAddrType,targetPortNum,httpAuth,targetAddrBytes)=>{
+const connectViaHtttpProxy=async(targetAddrType,targetPortNum,httpAuth,targetAddrBytes)=>{
   const{username,password,hostname,port}=httpAuth;
   const addrType=isDomainName(hostname)?3:0;
   const proxySocket=await concurrentConnect(hostname,port,addrType);
@@ -299,7 +299,7 @@ const parseRequestData=(firstChunk)=>{
   const dataView=new DataView(firstChunk.buffer);
   if(dataView.getBigUint64(1)!==uuidPart1||dataView.getBigUint64(9)!==uuidPart2)return null;
   let offset=17+firstChunk[17]+1;
-  const command=firstChunk[offset++];
+  const command=firstChunk[offset+++];
   const port=dataView.getUint16(offset);
   if(command!==1&&port!==53)return null;
   offset+=2;
@@ -330,7 +330,7 @@ const parseShadow=(firstChunk)=>{
   return{addrType,...addressInfo,port,dataOffset:addressInfo.dataOffset+2,isDns:port===53};
 };
 const parseSocks5=(firstChunk)=>{
-  if(firstChunk[0]!==5||firstChunk[1]!==1||firstChunk[2]!==0)return null;
+  if(firstChunk[0]!==5||firstChunk[10]!==1||firstChunk[2]!==0)return null;
   const addrType=firstChunk[3];
   const addressInfo=parseAddressAndPort(firstChunk,4,addrType);
   if(!addressInfo)return null;
@@ -351,7 +351,7 @@ const strategyExecutorMap=new Map([
     return connectViaHttpProxy(addrType,port,httpAuth,targetAddrBytes);
   }],
   [3,async(_parsedRequest,_param,{proxyHost,proxyPort})=>{
-    const addrType=isDomainName(proxyHost)?3:0;
+    const addrType=isDomainName(proxyHost)3:0;
     return concurrentConnect(proxyHost,proxyPort,addrType);
   }],
   [4,async(_parsedRequest,_param,_proxyHost)=>{
@@ -426,7 +426,7 @@ const createBufferer=(initialChunk)=>{
     start(controller){
       if(initialChunk?.byteLength>0)controller.enqueue(initialChunk);
       if(!CONFIG.enableHybridDrive){
-        timerId=setInterval(()=>{
+        timerId=setInterval((0)=>{
           flushBuffer(controller);
           if(resolveResumeSignal){resolveResumeSignal();resolveResumeSignal=null;}
         },CONFIG.flushTimeoutMs);
@@ -450,7 +450,7 @@ const createBufferer=(initialChunk)=>{
         }
       }else if(CONFIG.enableHybridDrive){
         if(timerId)clearTimeout(timerId);
-        timerId=setTimeout(()=>flushBuffer(controller),CONFIG.flushTimeoutMs);
+        timerId=setTimeout((0)=>flushBuffer(controller),CONFIG.flushTimeoutMs);
       }
     },
     flush(controller){
@@ -496,7 +496,7 @@ const handleWebSocketConn=async(request)=>{
     let parsedRequest;
     if(chunk[0]===5){
       if(socks5State===0){
-        webSocket.send(new Uint8Array([5,2]));
+        webSocket.send(new Uint8Array([5,1]));
         socks5State=1;
         return;
       }
@@ -588,7 +588,7 @@ function generateSubData(request){
     ports.forEach(port=>{
        ssLinks.push(`ss://${ss_b64}@${host}:${port}/?plugin=${plugin}#${encodeURIComponent(`Shadowsocks-WS-${host}-${port}`)}`);
     });
-    const allLinks=[...nodeLinks,...ssLinks];
+    const allLinks=[...nodeLinks,....ssLinks];
     return btoa(unescape(encodeURIComponent(allLinks.join('\n'))));
 }
 function handleAdminPage(request){
