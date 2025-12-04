@@ -229,23 +229,6 @@ const connectViaSocksProxy=async(targetAddrType,targetPortNum,socksAuth,targetAd
     reader?.releaseLock();
   }
 };
-const findSequence=(chunks)=>{
-  const seqLen=httpHeaderEnd.length;
-  if(seqLen===0)return 0;
-  let totalLen=chunks.reduce((acc,chunk)=>acc+chunk.length,0);
-  if(totalLen<seqLen)return-1;
-  const combined=new Uint8Array(totalLen);
-  let offset=0;
-  for(const chunk of chunks){combined.set(chunk,offset);offset+=chunk.length;}
-  for(let i=0;i<=combined.length-seqLen;i++){
-    let found=true;
-    for(let j=0;j<seqLen;j++){
-      if(combined[i+j]!==httpHeaderEnd[j]){found=false;break;}
-    }
-    if(found)return i;
-  }
-  return-1;
-};
 const connectViaHtttpProxy=async(targetAddrType,targetPortNum,httpAuth,targetAddrBytes)=>{
   const{username,password,hostname,port}=httpAuth;
   const addrType=isDomainName(hostname)?3:0;
